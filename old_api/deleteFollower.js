@@ -8,7 +8,7 @@ const buildApiUrl = ({ follower_id }) =>
 export default async function (req, res) {
   const { follower_id } = req.query;
   const username = "cucumber.techstore";
-  const password = "HOLA1234";
+  const password = " ";
 
   const browser = await chromium.launch({ headless: false });
   const { page } = await authenticate(browser, { username, password });

@@ -14,7 +14,7 @@ export default async function (req, res) {
   //   const {
   //     unfollow_user,
   //     username = "cucumber.techstore",
-  //     password = "HOLA1234",
+  //     password = " ",
   //   } = req.query;
 
   const browser = await chromium.launch({ headless: false });

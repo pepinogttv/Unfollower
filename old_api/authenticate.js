@@ -6,7 +6,7 @@ const { getAuthCookie } = require("./auth");
 export default async function (req, res) {
   //   const { username, password } = req.body;
   const username = "cucumber.techstore";
-  const password = "HOLA1234";
+  const password = " ";
   const browser = await chromium.launch({ headless: false });
   const authCookie = await getAuthCookie({ username, password });
   const csrftoken = get_csrftoken();

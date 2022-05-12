@@ -32,7 +32,7 @@ export default async function (req, res) {
 // export default async function (req, res) {
 //   const { username } = req.query;
 //   const { credentials } = req.body || {
-//     credentials: { username: "cucumber.techstore", password: "HOLA1234" },
+//     credentials: { username: "cucumber.techstore", password: " " },
 //   };
 //   const Cookie = await getAuthCookie(credentials);
 //   const apiUrl = buildApiUrl({ username });

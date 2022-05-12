@@ -9,7 +9,7 @@ export default async function (req, res) {
   // const { username, password } = req.body;
   console.time("follows");
   const username = "cucumber.techstore";
-  const password = "HOLA1234";
+  const password = " ";
   const browser = await chromium.launch({ headless: false });
 
   const authCookie = await getAuthCookie({

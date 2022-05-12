@@ -11,7 +11,7 @@ const { chromium } = require("playwright");
 export default async function (req, res) {
   const { username, password } = req.body || {
     username: "cucumber.techstore",
-    password: "HOLA1234",
+    password: " ",
   };
 
   const browser = await chromium.launch({ headless: false });

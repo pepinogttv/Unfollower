@@ -10,7 +10,7 @@ export default async function (req, res) {
   console.log("get followers");
   console.time("followers");
   const username = "cucumber.techstore";
-  const password = "HOLA1234";
+  const password = " ";
 
   const browser = await chromium.launch({ headless: false });
 
