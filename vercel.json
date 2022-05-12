@@ -1,0 +1,16 @@
+{
+  "functions": {
+    "api/following.js": {
+      "memory": 1024,
+      "maxDuration": 10
+    },
+    "api/followers.js": {
+      "memory": 1024,
+      "maxDuration": 10
+    },
+    "api/users-additional-info.js": {
+      "memory": 1024,
+      "maxDuration": 10
+    }
+  }
+}
