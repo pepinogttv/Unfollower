@@ -28,8 +28,7 @@
 </template>
 
 <script>
-const waitFor = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-import { unfollow, follow } from "../services/UserActions";
+import Actions from "../services/UserActions";
 import { get } from "vuex-pathify";
 import UsersDB from "../services/RelatedUsersDB";
 
@@ -118,13 +117,13 @@ export default {
     },
     async unfollow() {
       this.loading("unfollow");
-      await unfollow({
+      const error = await Actions.unfollow({
         user: this.user,
-        credentials: this.account,
-        from: this.type,
-        error: (e) => console.error(e),
-        success: (user) => console.log(`Dejaste de seguir a ${user.username}`),
+        auth: this.account.auth,
+        pk: this.account.pk,
       });
+      if (error) return console.error(error);
+      this.userChange();
       this.unfollowed = true;
       this.followed = false;
       this.blocked = false;
@@ -132,21 +131,27 @@ export default {
     },
     async follow() {
       this.loading("follow");
-      await follow({
+      const error = await Actions.follow({
         user: this.user,
-        from: this.type,
-        credentials: this.account,
-        error: (e) => console.error(e),
-        success: (user) => console.log(`Seguiste a ${user.username}`),
+        auth: this.account.auth,
+        pk: this.account.pk,
       });
+      if (error) return console.error(error);
       if (this.user.is_private) this.pending_request = true;
+      this.userChange();
       this.followed = true;
       this.blocked = false;
       this.loading("follow");
     },
     async block() {
       this.loading("block");
-      await waitFor(1000);
+      const error = await Actions.block({
+        user: this.user,
+        auth: this.account.auth,
+        pk: this.account.pk,
+      });
+      if (error) return console.error(error);
+      this.userChange();
       this.followed = false;
       this.blocked = true;
       this.deleted = true;
@@ -154,14 +159,26 @@ export default {
     },
     async unblock() {
       this.loading("unblock");
-      await waitFor(1000);
+      const error = await Actions.unblock({
+        user: this.user,
+        auth: this.account.auth,
+        pk: this.account.pk,
+      });
+      if (error) return console.error(error);
+      this.userChange();
       this.followed = false;
       this.blocked = false;
       this.loading("unblock");
     },
     async delete() {
       this.loading("delete");
-      await waitFor(1000);
+      const error = await Actions.deletef({
+        user: this.user,
+        auth: this.account.auth,
+        pk: this.account.pk,
+      });
+      if (error) return console.error(error);
+      this.userChange();
       this.loadings.delete = true;
       this.deleted = true;
       this.loading("delete");
@@ -184,12 +201,16 @@ export default {
         checkbox.style.visibility = "hidden";
       }
     },
+    userChange() {
+      console.log("user change in action log");
+      this.$emit("change:user");
+    },
   },
   computed: {
     account: get("account"),
   },
-  async mounted() {
-    if (!this.inQtyAction) this.handleInQtyAction();
+  async created() {
+    // if (!this.inQtyAction) this.handleInQtyAction();
     const { pk } = this.account;
     const DB = await UsersDB(pk);
     this.loadings.is = true;
@@ -214,10 +235,11 @@ export default {
     }
     if (isFollower) this.deleted = false;
     else this.deleted = true;
-    console.log(this.inQtyAction);
 
-    if (this.inQtyAction) this.handleInQtyAction();
     this.loadings.is = false;
+  },
+  mounted() {
+    this.handleInQtyAction();
   },
   watch: {
     inQtyAction() {

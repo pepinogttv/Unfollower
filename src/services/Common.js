@@ -89,11 +89,13 @@ function compareRelatedUsers(oldUsers, newUsers) {
 
 async function updateRelatedUsers(account) {
   const { pk } = account;
+  console.log(pk);
   const DB = await UsersDB(pk);
 
   if (DB.isFirstDB()) {
     console.log("IS FIRST DB");
     const updatedUsers = await getUpdatedUsers(account);
+    console.log({ updatedUsers });
     return DB.setUsers({
       ...updatedUsers,
       ...getComputedUsers(updatedUsers),
@@ -117,6 +119,7 @@ async function updateRelatedUsers(account) {
   const storeNames = Object.keys(relatedUsers);
   const newDB = await UsersDB(pk, storeNames);
 
+  console.log({ relatedUsers });
   storage.saveLastUpdate(pk);
   return newDB.setUsers(relatedUsers);
 }
@@ -125,21 +128,9 @@ async function getRelatedUsers(pk) {
   const DB = await UsersDB(pk);
   if (DB.isFirstDB()) return {};
   const users = await DB.getUsers();
+  console.log({ users });
   DB.close();
   return users;
 }
 
-async function isFirstDB(pk) {
-  const DB = await UsersDB(pk);
-  const isFirstDB = DB.isFirstDB();
-  DB.close();
-  return isFirstDB;
-}
-
-export {
-  updateRelatedUsers,
-  updatePendingRequests,
-  getRelatedUsers,
-  isFirstDB,
-  signin,
-};
+export { updateRelatedUsers, updatePendingRequests, getRelatedUsers, signin };

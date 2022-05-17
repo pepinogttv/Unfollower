@@ -24,9 +24,9 @@ export default async function (req, res) {
       await ig.account.login(process.env.DEF_USER, process.env.DEF_PASSWORD);
       user = await ig.user.usernameinfo(username);
       console.log({ user });
+      if (user.is_private)
+        throw "Tu cuenta no es publica. Configurala como publica para continuar sin clave";
     }
-    if (user.is_private)
-      throw "Tu cuenta no es publica. Configurala como publica para continuar sin clave";
     user.profile_pic_base64 = await getProfilePicInBase64(user.profile_pic_url);
 
     const auth = await ig.state.serialize();
@@ -38,7 +38,10 @@ export default async function (req, res) {
       },
     });
   } catch (err) {
-    const message = typeof err === "string" ? err : "INCORRECT PASSWORD OR 2FA";
+    const message =
+      typeof err === "string"
+        ? err
+        : "Tu clave es incorrecta o tienen habilidata la autenticacion en 2 pasos.";
     console.log(err);
     res.status(200).send({
       status: "error",

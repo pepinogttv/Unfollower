@@ -58,15 +58,19 @@
       <v-col cols="12" md="6" v-for="(group, i) of groups" :key="i">
         <GroupCard
           :data="group"
-          :disabled="!relatedUsers"
+          :disabled="!relatedUsers || !validUsers"
           :loading="loading"
           v-if="group.isMain || (relatedUsers && relatedUsers[group.name])"
         >
-          {{ relatedUsers ? relatedUsers[group.name].length : 0 }}
+          {{ relatedUsers && validUsers ? relatedUsers[group.name].length : 0 }}
         </GroupCard>
       </v-col>
     </v-row>
-    <UnfollowerTable :related-users="relatedUsers" v-if="group" />
+    <UnfollowerTable
+      :related-users="relatedUsers"
+      v-if="group"
+      @click:close="tableClosed"
+    />
   </v-card>
 </template>
 
@@ -77,11 +81,7 @@ import Credentials from "../components/Credentials.vue";
 import ProfileImage from "../components/ProfileImage.vue";
 import DialogContinueAs from "../components/DialogContinueAs.vue";
 import { userGroups } from "../../configs";
-import {
-  updateRelatedUsers,
-  getRelatedUsers,
-  isFirstDB,
-} from "../services/Common";
+import { updateRelatedUsers, getRelatedUsers } from "../services/Common";
 import { get, call } from "vuex-pathify";
 
 export default {
@@ -109,7 +109,6 @@ export default {
     },
     async setRelatedUsers() {
       this.loading = true;
-      this.isFirstDB = await isFirstDB(this.account.pk);
       this.relatedUsers = await getRelatedUsers(this.account.pk);
       this.loading = false;
     },
@@ -123,10 +122,18 @@ export default {
     changeAccount(account) {
       this.$store.set("account", { account });
     },
+    tableClosed({ usersChanged }) {
+      this.$router.push({ path: "/groups" });
+      if (usersChanged) this.setRelatedUsers();
+    },
   },
   computed: {
     group() {
       return this.$route.params.group;
+    },
+    validUsers() {
+      if (!this.relatedUsers) return false;
+      return !!Object.values(this.relatedUsers).find((value) => value.length);
     },
     account: get("account"),
     accounts: get("accounts"),
@@ -141,6 +148,9 @@ export default {
     },
     addAccount() {
       console.log(this.addAccount);
+    },
+    relatedUsers() {
+      console.log(this.relatedUsers);
     },
   },
 };

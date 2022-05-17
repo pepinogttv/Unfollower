@@ -31,21 +31,16 @@ async function authenticate(username, password, ig_client) {
 }
 
 async function get_followers(ig_client, pk) {
-  const feed = ig_client.feed.accountFollowers(pk);
-  let items = [];
-  // items = items.concat(await feed.items());
-  // console.log(items.)
-  // do {
-  //   items = items.concat(await feed.items());
-  // } while (feed.isMoreAvailable());
-  // return items;
+  const followers_feed = ig_client.feed.accountFollowers(pk);
+  const alls = [];
+
   return new Promise((resolve, reject) => {
-    feed.items$.subscribe(
+    followers_feed.items$.subscribe(
       (followers) => {
-        items.push(followers);
+        alls.push(followers);
       },
       (error) => reject(error),
-      () => resolve(items.flat())
+      () => resolve(alls.flat())
     );
   });
 }

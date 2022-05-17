@@ -3,21 +3,24 @@
     <div class="fill-height">
       <v-card
         light
-        height="90vh"
+        height="95vh"
         class="overflow-x-hidden overflow-y-auto"
         color="transparent"
         elevation="0"
       >
         <v-data-table
-          style="width: 1600px; max-width: 100%"
+          style="width: 1600px; max-width: 90vw"
           :items-per-page="10"
           :headers="headers"
           :items="showedData"
+          :page.sync="page"
           item-key="pk"
           show-select
+          hide-default-footer
           :search="search"
           disable-sort
           v-model="selecteds"
+          @page-count="pageCount = $event"
           class="elevation-1 pt-1"
           @update:page="update_page"
         >
@@ -27,7 +30,11 @@
             >
               <div>{{ title }}</div>
               <div>
-                <v-btn icon to="/groups" exact>
+                <v-btn
+                  icon
+                  exact
+                  @click="$emit('click:close', { usersChanged })"
+                >
                   <v-icon> mdi-close</v-icon>
                 </v-btn>
               </div>
@@ -37,23 +44,27 @@
                 <v-text-field
                   v-model="search"
                   outlined
-                  hide-details=""
+                  hide-details
                   label="Buscar por nombre de usuario"
                 ></v-text-field>
               </v-col>
-              <v-col cols="6">
+              <v-col cols="2">
                 <InQuantity
                   v-model="inQtyAction"
                   :selecteds="selecteds"
                   @cancel="selecteds = []"
                 />
               </v-col>
-              <v-col cols="2" class="d-flex justify-end align-center">
-                <v-checkbox
-                  class="mr-6"
-                  label="Ver solo verificados"
-                  v-model="onlyVerified"
-                ></v-checkbox>
+              <v-col cols="6" class="d-flex justify-end align-center">
+                <v-card max-width="250" elevation="0" class="transparent mr-4">
+                  <v-select
+                    :items="['Todos', 'Sin verificar', 'Verificados']"
+                    v-model="show"
+                    outlined
+                    hide-details
+                  >
+                  </v-select>
+                </v-card>
               </v-col>
             </v-row>
           </template>
@@ -95,6 +106,7 @@
           <template #item.actions="{ item }">
             <UserActions
               v-if="!pagination"
+              @change:user="usersChanged = true"
               :user="item"
               :type="group"
               @delete-user="delete_user"
@@ -104,6 +116,17 @@
           </template>
           <template #item.is_private="{ item: { is_private } }">
             {{ is_private ? "Privada" : "Publica" }}
+          </template>
+          <template #footer>
+            <v-divider></v-divider>
+            <div class="py-4">
+              <v-pagination
+                v-model="page"
+                :length="pageCount"
+                total-visible="10"
+                circle
+              ></v-pagination>
+            </div>
           </template>
         </v-data-table>
       </v-card>
@@ -132,23 +155,21 @@ export default {
       search: "",
       headers: [
         { text: "Foto de perfil", value: "profile_pic_url" },
-        {
-          text: "Nombre de usuario",
-          value: "username",
-        },
+        { text: "Usuario", value: "username" },
         { text: "Nombre completo", value: "full_name" },
         { text: "Instagram", value: "instagram" },
         { text: "Cuenta", value: "is_private" },
-        // { text: "Seguidores", value: "follower_count" },
-        // { text: "Seguidos", value: "following_count" },
         { text: "Seguidores/Seguidos", value: "counts" },
         { text: "Acciones", value: "actions" },
       ],
       showedData: [],
-      onlyVerified: false,
+      show: "Todos",
       pagination: false,
       selecteds: [],
       inQtyAction: "",
+      usersChanged: false,
+      page: 1,
+      pageCount: 0,
     };
   },
   mounted() {
@@ -190,13 +211,19 @@ export default {
     },
   },
   watch: {
-    onlyVerified() {
+    show(value) {
       this.update_page();
-      if (this.onlyVerified)
+
+      if (value === "Todos" || !value)
+        this.showedData = this.current_related_users;
+      else if (value === "Verificados")
         this.showedData = this.current_related_users.filter(
           ({ is_verified }) => is_verified
         );
-      else this.showedData = this.current_related_users;
+      else if (value === "Sin verificar")
+        this.showedData = this.current_related_users.filter(
+          ({ is_verified }) => !is_verified
+        );
     },
     search() {
       this.update_page();

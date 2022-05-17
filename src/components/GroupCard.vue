@@ -33,7 +33,7 @@
         </v-card>
       </div>
     </template>
-    <span> Descarga tus datos </span>
+    <span> Primero descarga tus datos </span>
   </v-tooltip>
 </template>
 

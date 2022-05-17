@@ -59,6 +59,7 @@ class RelatedUsersDB {
     this.db.getFromIndex(store_key, indexed_key, value);
   }
   async deleteOne(store_key, pk) {
+    console.log({ store_key, pk });
     await this.db.delete(store_key, pk);
   }
   async delete() {
@@ -97,10 +98,8 @@ export default async function (
       }
       return users;
     },
-    deleteUser(user, storesWhere = stores) {
-      return Promise.all(
-        storesWhere.map((store) => DB.deleteOne(store, user.pk))
-      );
+    deleteUser({ pk }, storesWhere = stores) {
+      return Promise.all(storesWhere.map((store) => DB.deleteOne(store, pk)));
     },
     addUser(user, storesWhere = stores) {
       return Promise.all(storesWhere.map((store) => DB.addOne(store, user)));
@@ -112,10 +111,11 @@ export default async function (
       return DB.getOne(store, user_pk);
     },
     async getUserStoreNames(user) {
+      console.log({ user });
       const storeNames = [];
       for (const store of stores) {
         const exists = await DB.getOne(store, user.pk);
-        if (exists) stores.push(store);
+        if (exists) storeNames.push(store);
       }
       return storeNames;
     },

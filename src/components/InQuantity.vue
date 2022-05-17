@@ -8,7 +8,9 @@
           {{ selecteds.length }}
           {{ selecteds.length > 1 ? "usuarios" : "usuario" }}.
         </v-card-title>
-        <v-card-text> No podras revertir los cambios. </v-card-text>
+        <v-card-text class="error--text">
+          No podras revertir los cambios.
+        </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="blue darken-1" text @click="dialog = false"
@@ -26,11 +28,11 @@
     </v-dialog>
     <!-- <div class="subtitle-2 mb-2">Selecciona la accion en cantidad</div> -->
     <div class="d-flex align-center">
-      <v-card max-width="300" elevation="0" class="transparent mr-4">
+      <v-card min-width="250" elevation="0" class="transparent mr-4">
         <v-select
           :items="actions"
           @click:clear="$emit('cancel')"
-          label="Accion en cantidad"
+          label="Selecciona una accion"
           v-model="action"
           hide-details
           outlined

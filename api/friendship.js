@@ -16,7 +16,13 @@ export default async function (req, res) {
       await waitFor(Math.random() * 6000 + 1000);
     }
   } else {
-    await ig_client.friendship[action](users[0].pk);
+    try {
+      console.log({ action });
+      const x = await ig_client.friendship[action](users[0].pk);
+      console.log(x);
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   console.timeEnd("Unfollow");
