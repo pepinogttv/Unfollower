@@ -20,6 +20,7 @@
           :search="search"
           disable-sort
           v-model="selecteds"
+          :loading="loading"
           @page-count="pageCount = $event"
           class="elevation-1 pt-1"
           @update:page="update_page"
@@ -52,6 +53,9 @@
                 <InQuantity
                   v-model="inQtyAction"
                   :selecteds="selecteds"
+                  @action-confirmed="loading = true"
+                  @action-executed="actionExecuted"
+                  @action-ended="loading = false"
                   @cancel="selecteds = []"
                 />
               </v-col>
@@ -121,6 +125,7 @@
             <v-divider></v-divider>
             <div class="py-4">
               <v-pagination
+                :disabled="loading"
                 v-model="page"
                 :length="pageCount"
                 total-visible="10"
@@ -139,6 +144,7 @@ import UserActions from "../components/UserActions.vue";
 import InQuantity from "./InQuantity.vue";
 import Counts from "./Counts.vue";
 import ProfileImageInTable from "./ProfileImageInTable.vue";
+import { userGroups } from "../../configs";
 export default {
   components: {
     OfficialAccountIcon,
@@ -167,6 +173,7 @@ export default {
       pagination: false,
       selecteds: [],
       inQtyAction: "",
+      loading: false,
       usersChanged: false,
       page: 1,
       pageCount: 0,
@@ -180,19 +187,13 @@ export default {
     group() {
       return this.$route.params.group;
     },
-    title() {
-      const { group } = this;
-      if (group === "followers") return "Seguidores";
-      if (group === "following") return "Seguidos";
-      if (group === "fans")
-        return "Fanes (usuarios que te siguen y vos no seguis)";
-      if (group === "idols")
-        return "Idolos (usuarios que seguis y no te siguen)";
-      return "Amigos (Lo seguis y te sigue)";
-    },
     current_related_users() {
       if (!this.relatedUsers) return [];
       return this.relatedUsers[this.group];
+    },
+    title() {
+      const { title, help } = userGroups.find(({ name }) => name == this.group);
+      return `${title} (${help})`;
     },
   },
   methods: {
@@ -208,6 +209,13 @@ export default {
     update_page() {
       this.pagination = true;
       setTimeout(() => (this.pagination = false));
+    },
+    actionExecuted(pk) {
+      console.log(pk);
+      this.relatedUsers[this.group] = this.current_related_users.filter(
+        (user) => user.pk !== pk
+      );
+      this.showedData = this.current_related_users;
     },
   },
   watch: {
@@ -227,6 +235,9 @@ export default {
     },
     search() {
       this.update_page();
+    },
+    inQtyAction() {
+      this.selecteds = [];
     },
   },
 };

@@ -17,9 +17,9 @@ export default async function (req, res) {
     }
   } else {
     try {
-      console.log({ action });
-      const x = await ig_client.friendship[action](users[0].pk);
-      console.log(x);
+      const { pk } = users[0];
+      await ig_client.friendship[action](pk);
+      console.log(await ig_client.friendship.show(pk))
     } catch (err) {
       console.log(err);
     }

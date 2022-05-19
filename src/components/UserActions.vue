@@ -87,10 +87,10 @@ export default {
           },
         },
         {
-          name: "delete",
+          name: "deletef",
           exp: "Eliminar seguidor",
           icon: "mdi-account-remove",
-          method: this.delete,
+          method: this.deletef,
           show_if({ deleted, blocked }) {
             if (deleted || blocked) return false;
             else return true;
@@ -99,7 +99,7 @@ export default {
       ],
       loadings: {
         unfollow: false,
-        delete: false,
+        deletef: false,
         follow: false,
         block: false,
         unblock: false,
@@ -170,8 +170,8 @@ export default {
       this.blocked = false;
       this.loading("unblock");
     },
-    async delete() {
-      this.loading("delete");
+    async deletef() {
+      this.loading("deletef");
       const error = await Actions.deletef({
         user: this.user,
         auth: this.account.auth,
@@ -179,9 +179,8 @@ export default {
       });
       if (error) return console.error(error);
       this.userChange();
-      this.loadings.delete = true;
       this.deleted = true;
-      this.loading("delete");
+      this.loading("deletef");
     },
     show_action(fn) {
       const { blocked, followed, deleted, pending_request } = this;
@@ -190,6 +189,7 @@ export default {
     handleInQtyAction() {
       const row = this.$el.parentElement.parentElement;
       const checkbox = row.querySelector(".v-data-table__checkbox");
+      if (!checkbox) return;
       if (!this.inQtyAction) {
         checkbox.style.visibility = "hidden";
         return;

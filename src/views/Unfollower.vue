@@ -60,7 +60,7 @@
           :data="group"
           :disabled="!relatedUsers || !validUsers"
           :loading="loading"
-          v-if="group.isMain || (relatedUsers && relatedUsers[group.name])"
+          v-if="relatedUsers && relatedUsers[group.name]"
         >
           {{ relatedUsers && validUsers ? relatedUsers[group.name].length : 0 }}
         </GroupCard>
@@ -93,7 +93,15 @@ export default {
     DialogContinueAs,
   },
   data: () => ({
-    relatedUsers: null,
+    relatedUsers: {
+      followers: [],
+      following: [],
+      friends: [],
+      fans: [],
+      idols: [],
+      gainedFollowers: [],
+      lostFollowers: [],
+    },
     loading: false,
     groups: userGroups,
     isFirstDB: true,
@@ -145,9 +153,6 @@ export default {
     account(value) {
       if (!value) this.relatedUsers = null;
       else this.setRelatedUsers();
-    },
-    addAccount() {
-      console.log(this.addAccount);
     },
     relatedUsers() {
       console.log(this.relatedUsers);

@@ -28,7 +28,6 @@
           outlined
           hide-details
           label="Usuario de instagram"
-          @change="finishedName"
           v-model="username"
         ></v-text-field>
         <div class="mb-4" v-show="!withoutPassword"></div>
@@ -44,14 +43,14 @@
         ></v-text-field>
       </div>
     </div>
-    <div class="subtitle-2 mt-2 text-decoration-underline">
+    <!-- <div class="subtitle-2 mt-2 text-decoration-underline">
       <span
         style="user-select: none; cursor: pointer"
         @click="withoutPassword = !withoutPassword"
       >
         {{ withoutPassword ? "Continuar con clave" : "Continuar sin clave" }}
       </span>
-    </div>
+    </div> -->
     <v-checkbox
       label="Mantener sesion (No se guarda tu clave)"
       class="mt-8"
@@ -95,12 +94,6 @@ export default {
       if (this.passwordAppendIcon === "mdi-eye")
         this.passwordAppendIcon = "mdi-eye-off";
       else this.passwordAppendIcon = "mdi-eye";
-    },
-    finishedName() {
-      // this.las_update = storage.getLastUpdate(this.username);
-      // if (exists) {
-      //   this.$emit("saved-user-selected", this.username);
-      // }
     },
     async signin() {
       this.loading = true;

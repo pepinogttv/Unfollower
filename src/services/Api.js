@@ -3,7 +3,6 @@ import { divideArray } from "./utils";
 const base_url = new URL(window.location.href).origin + "/api";
 
 function getFollowers(account) {
-  console.log(account.auth);
   const body = JSON.stringify({
     auth: account.auth,
     pk: account.pk,

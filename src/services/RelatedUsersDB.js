@@ -1,7 +1,7 @@
 import { openDB, deleteDB } from "idb";
 const DefaultData = {
   version: 1,
-  objectStores: ["followers", "following", "fans", "idols", "friends"],
+  objectStores: ["followers", "following", "fans", "idols", "friends", "gainedFollowers", "lostFollowers"],
 };
 class RelatedUsersDB {
   constructor({ version, objectStores, pk }) {
@@ -23,9 +23,9 @@ class RelatedUsersDB {
           stores[storeKey] = db.createObjectStore(storeKey, {
             keyPath: "pk",
           });
-          stores[storeKey].createIndex("pending_request", "pending_request", {
-            unique: false,
-          });
+          // stores[storeKey].createIndex("pending_request", "pending_request", {
+          //   unique: false,
+          // });
         });
       },
     });
@@ -93,6 +93,7 @@ export default async function (
     },
     async getUsers() {
       const users = {};
+      console.log(stores)
       for (const group of stores) {
         users[group] = await DB.getAll(group);
       }

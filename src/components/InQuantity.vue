@@ -3,10 +3,10 @@
     <v-dialog v-model="dialog" max-width="500px">
       <v-card>
         <v-card-title class="text-h6 text-break">
-          Estas seguro que quieres realizar la accion <br />
+          ¿Estas seguro que quieres realizar la accion <br />
           "{{ currentActionTxt }}" en
           {{ selecteds.length }}
-          {{ selecteds.length > 1 ? "usuarios" : "usuario" }}.
+          {{ selecteds.length > 1 ? "usuarios" : "usuario" }}?
         </v-card-title>
         <v-card-text class="error--text">
           No podras revertir los cambios.
@@ -16,12 +16,7 @@
           <v-btn color="blue darken-1" text @click="dialog = false"
             >Cancelar</v-btn
           >
-          <v-btn
-            color="blue darken-1"
-            text
-            @click="$emit('action-confirmed', action)"
-            >Confirmar
-          </v-btn>
+          <v-btn color="blue darken-1" text @click="confirm">Confirmar </v-btn>
           <v-spacer></v-spacer>
         </v-card-actions>
       </v-card>
@@ -30,6 +25,7 @@
     <div class="d-flex align-center">
       <v-card min-width="250" elevation="0" class="transparent mr-4">
         <v-select
+          :disabled="loading"
           :items="actions"
           @click:clear="$emit('cancel')"
           label="Selecciona una accion"
@@ -47,10 +43,9 @@
             <v-btn
               @click="dialog = true"
               color="secondary"
-              :disabled="!selecteds.length"
-              v-if="action"
+              :disabled="!selecteds.length || loading"
             >
-              {{ currentActionTxt }} seleccionados
+              Confirmar
             </v-btn>
           </div>
         </template>
@@ -64,6 +59,8 @@
 </template>
 
 <script>
+import { get } from "vuex-pathify";
+import Actions from "../services/UserActions";
 export default {
   props: {
     inQtyAction: String,
@@ -79,13 +76,14 @@ export default {
   data: () => ({
     actions: [
       { text: "Dejar de seguir", value: "unfollow" },
-      { text: "Eliminar seguidores", value: "delete" },
+      { text: "Eliminar seguidores", value: "deletef" },
       { text: "Bloquear", value: "block" },
       { text: "Desblquear", value: "unblock" },
       { text: "Seguir", value: "follow" },
     ],
     action: "",
     dialog: false,
+    loading: false,
   }),
   computed: {
     currentActionTxt() {
@@ -93,6 +91,24 @@ export default {
       return this.actions
         .find(({ value }) => value === this.action)
         .text.toLowerCase();
+    },
+    auth: get("account@auth"),
+    pk: get("account@pk"),
+  },
+  methods: {
+    async confirm() {
+      Actions;
+      this.dialog = false;
+      this.loading = true;
+      this.$emit("action-confirmed");
+      for (const user of this.selecteds) {
+        // await Actions[this.action](user, this.auth, this.pk);
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        this.$emit("action-executed", user.pk);
+      }
+
+      this.loading = false;
+      this.$emit("action-ended");
     },
   },
 };

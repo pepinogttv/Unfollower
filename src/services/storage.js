@@ -55,7 +55,6 @@ function saveUserInfo(user_info) {
   const users_info = get(STORAGE_NAME);
   if (!users_info) return set(STORAGE_NAME, [user_info]);
   const stored_user_info = users_info.find(({ pk }) => pk === user_info.pk);
-  console.log({ stored_user_info, user_info });
   if (!stored_user_info) return set(STORAGE_NAME, [...users_info, user_info]);
   const username_change = stored_user_info.username !== user_info.username;
   if (username_change) stored_user_info.username = user_info.username;
