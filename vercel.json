@@ -8,7 +8,7 @@
       "memory": 1024,
       "maxDuration": 10
     },
-    "api/users-additional-info.js": {
+    "api/ig-auth.js": {
       "memory": 1024,
       "maxDuration": 10
     }
