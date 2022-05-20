@@ -7,7 +7,7 @@ en mas de un usuario a la vez y ademas en 100% gratis.
 
 ## Aclaraciones
 
-- No se almacenan tus inicios de sesion ni tus claves. La aplicacion inicia sesion mediante el sitio oficial de Instagram y luego recibe los datos necesarios (cookies, etc) para hacer solicitudes y analizar tu cuenta
+- No se almacenan tus claves. La aplicacion inicia sesion mediante el sitio oficial de Instagram y luego recibe los datos necesarios (cookies, etc) para hacer solicitudes y analizar tu cuenta
 - Por el momento su uso no esta pensando para cuentas con mucha cantidad de seguidores/seguidos (+20.000);
 
 ## Run Locally

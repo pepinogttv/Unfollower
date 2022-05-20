@@ -1,8 +1,11 @@
 import http from "../http/http";
 import { divideArray } from "./utils";
-const { hostname, protocol, port } = new URL(window.location.href);
+const url = new URL(window.location.href);
+const { hostname, protocol } = url;
+const port = url.port ? ':3000' : ''
+
 const API_WITH_EXPRESS = port === '8080';
-const base_url = `${protocol}//${hostname}:3000/api`
+const base_url = `${protocol}//${hostname}${port}/api`
 console.log(base_url)
 function getFollowers(account) {
   const body = JSON.stringify({
