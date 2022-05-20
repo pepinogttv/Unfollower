@@ -6,8 +6,10 @@
           <div v-on="on" v-bind="attrs">
             <v-btn
               elevation="1"
-              :loading="loadings[name]"
-              :disabled="!show_action(show_if) || loadings.is || !!inQtyAction"
+              :loading="loadings[name] || loadings.actionInQty"
+              :disabled="
+                !show_action(show_if) || loadings.is || loadings.actionInQty
+              "
               @click="method"
               x-small
               fab
@@ -36,7 +38,7 @@ export default {
   props: {
     type: String,
     user: Object,
-    inQtyAction: String,
+    oneUserLoading: Number,
   },
   data() {
     return {
@@ -104,6 +106,7 @@ export default {
         block: false,
         unblock: false,
         is: false,
+        actionInQty: false,
       },
       followed: false,
       blocked: false,
@@ -186,15 +189,15 @@ export default {
       const { blocked, followed, deleted, pending_request } = this;
       return fn({ followed, blocked, deleted, pending_request });
     },
-    handleInQtyAction() {
+    handleActionInQty() {
       const row = this.$el.parentElement.parentElement;
       const checkbox = row.querySelector(".v-data-table__checkbox");
       if (!checkbox) return;
-      if (!this.inQtyAction) {
+      if (!this.actionInQty) {
         checkbox.style.visibility = "hidden";
         return;
       }
-      const action = this.actions.find(({ name }) => name === this.inQtyAction);
+      const action = this.actions.find(({ name }) => name === this.actionInQty);
       if (this.show_action(action.show_if)) {
         checkbox.removeAttribute("style");
       } else {
@@ -202,48 +205,52 @@ export default {
       }
     },
     userChange() {
-      console.log("user change in action log");
       this.$emit("change:user");
+    },
+    async init() {
+      const { pk } = this.account;
+      const DB = await UsersDB(pk);
+      this.loadings.is = true;
+      const [isFollowing, isFollower] = await Promise.all([
+        DB.getUser(this.user.pk, "following"),
+        DB.getUser(this.user.pk, "followers"),
+      ]);
+
+      this.followed =
+        this.type === "following" ||
+        this.type === "idols" ||
+        this.type === "friends" ||
+        isFollowing;
+
+      if (isFollower) this.deleted = false;
+      else this.deleted = true;
+
+      this.loadings.is = false;
     },
   },
   computed: {
     account: get("account"),
+    actionInQty: get("actionInQty"),
+    actionInQtyCurrentLoadingStart: get("actionInQtyCurrentLoadingStart"),
+    actionInQtyCurrentLoadingEnd: get("actionInQtyCurrentLoadingEnd"),
   },
   async created() {
-    // if (!this.inQtyAction) this.handleInQtyAction();
-    const { pk } = this.account;
-    const DB = await UsersDB(pk);
-    this.loadings.is = true;
-    const [isFollowing, isFollower] = await Promise.all([
-      DB.getUser(this.user.pk, "following"),
-      DB.getUser(this.user.pk, "followers"),
-    ]);
-    // console.log({ isFollowing, isFollower });
-
-    this.followed =
-      this.type === "following" ||
-      this.type === "idols" ||
-      this.type === "friends" ||
-      isFollowing;
-
-    if (this.user.pending_request) {
-      this.pending_request = true;
-      console.log({
-        pending_request: this.user.pending_request,
-        user: this.user.username,
-      });
-    }
-    if (isFollower) this.deleted = false;
-    else this.deleted = true;
-
-    this.loadings.is = false;
+    this.init();
   },
   mounted() {
-    this.handleInQtyAction();
+    this.handleActionInQty();
+    console.log(this.actionInQty);
   },
   watch: {
-    inQtyAction() {
-      this.handleInQtyAction();
+    actionInQty() {
+      this.handleActionInQty();
+    },
+    actionInQtyCurrentLoadingStart(pk) {
+      if (this.user.pk === pk) this.loadings.actionInQty = true;
+      console.log(this.loadings.actionInQty);
+    },
+    actionInQtyCurrentLoadingEnd(pk) {
+      if (this.user.pk === pk) this.loadings.actionInQty = false;
     },
   },
 };

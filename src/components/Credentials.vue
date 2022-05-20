@@ -11,16 +11,9 @@
     <div class="text-h4 font-weight-light">Iniciar sesion</div>
     <div class="mb-6 font-weight-light subtitle-2">
       Tus credenciales son unicamente para el uso de la aplicacion. <br />
-      <div class="error--text font-weight-bold" v-show="!withoutPassword">
+      <div class="error--text font-weight-bold">
         TU CLAVE NO SE QUEDARA GUARDADA.
       </div>
-    </div>
-    <div
-      class="error--text mb-2 d-flex align-center font-weight-bold"
-      v-if="withoutPassword"
-    >
-      <v-icon color="error" class="mr-1">mdi-alert-circle</v-icon>
-      TU CUENTA DEBE SER PUBLICA
     </div>
     <div>
       <div class="d-flex flex-column">
@@ -30,9 +23,8 @@
           label="Usuario de instagram"
           v-model="username"
         ></v-text-field>
-        <div class="mb-4" v-show="!withoutPassword"></div>
+        <div class="mb-4"></div>
         <v-text-field
-          v-if="!withoutPassword"
           outlined
           hide-details
           label="Clave de instagram"
@@ -43,14 +35,6 @@
         ></v-text-field>
       </div>
     </div>
-    <!-- <div class="subtitle-2 mt-2 text-decoration-underline">
-      <span
-        style="user-select: none; cursor: pointer"
-        @click="withoutPassword = !withoutPassword"
-      >
-        {{ withoutPassword ? "Continuar con clave" : "Continuar sin clave" }}
-      </span>
-    </div> -->
     <v-checkbox
       label="Mantener sesion (No se guarda tu clave)"
       class="mt-8"
@@ -58,7 +42,7 @@
     <v-btn
       color="secondary"
       type="submit"
-      :disabled="(!username || !password) && !withoutPassword"
+      :disabled="!username || !password"
       :loading="loading"
     >
       Iniciar sesion
@@ -79,7 +63,6 @@ export default {
       username: "",
       password: "",
       las_update: "",
-      withoutPassword: false,
       loading: false,
       errorMessage: "",
       snackbarError: false,
@@ -99,9 +82,7 @@ export default {
       this.loading = true;
 
       const { username, password } = this;
-      const credentials = this.withoutPassword
-        ? { username }
-        : { username, password };
+      const credentials = { username, password };
       const { error, data } = await signin(credentials);
       if (error) {
         this.snackbarError = true;

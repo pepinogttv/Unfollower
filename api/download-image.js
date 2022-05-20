@@ -1,5 +1,6 @@
 const base64 = require("node-base64-image");
-export default async function (req, res) {
+
+module.exports = async function (req, res) {
   const { url } = req.body;
 
   try {
@@ -15,3 +16,4 @@ export default async function (req, res) {
     });
   }
 }
+

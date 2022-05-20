@@ -1,5 +1,16 @@
 <template>
   <div>
+    <div v-if="snackbarMessages.length">
+      <v-snackbar
+        top
+        :value="true"
+        :timeout="1000"
+        v-for="(message, i) of snackbarMessages"
+        :key="i"
+      >
+        {{ message }}
+      </v-snackbar>
+    </div>
     <v-dialog v-model="dialog" max-width="500px">
       <v-card>
         <v-card-title class="text-h6 text-break">
@@ -33,7 +44,7 @@
           hide-details
           outlined
           clearable
-          @change="$emit('action-selected', action)"
+          @change="$store.set('actionInQty', action)"
         >
         </v-select>
       </v-card>
@@ -84,6 +95,7 @@ export default {
     action: "",
     dialog: false,
     loading: false,
+    snackbarMessages: [],
   }),
   computed: {
     currentActionTxt() {
@@ -101,10 +113,21 @@ export default {
       this.dialog = false;
       this.loading = true;
       this.$emit("action-confirmed");
-      for (const user of this.selecteds) {
-        // await Actions[this.action](user, this.auth, this.pk);
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        this.$emit("action-executed", user.pk);
+
+      const selecteds = [...this.selecteds];
+      for (const user of selecteds) {
+        this.$store.set("actionInQtyCurrentLoadingStart", user.pk);
+        try {
+          await Actions[this.action](user, this.auth, this.pk);
+        } catch (err) {
+          this.snackbarMessages.push(
+            `Error al ${this.currentActionTxt} a ${user.username}. Por favor intenta mas tarde.`
+          );
+        }
+
+        const indexToRemove = this.selecteds.indexOf(user);
+        this.selecteds.splice(indexToRemove, 1);
+        this.$store.set("actionInQtyCurrentLoadingEnd", user.pk);
       }
 
       this.loading = false;

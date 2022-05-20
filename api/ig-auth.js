@@ -1,6 +1,5 @@
-// import * as Bluebird from "bluebird";
-import { IgApiClient } from "instagram-private-api";
-// const shttps = require("socks-proxy-agent");
+const { IgApiClient } = require("instagram-private-api");
+
 const base64 = require("node-base64-image");
 
 async function getProfilePicInBase64(url) {
@@ -10,7 +9,8 @@ async function getProfilePicInBase64(url) {
   return `data:image/png;base64,${base64_pic}`;
 }
 
-export default async function (req, res) {
+module.exports = async function (req, res) {
+  console.log(req.body)
   const { username, password } = req.body;
   const ig = new IgApiClient();
   ig.state.generateDevice(username);

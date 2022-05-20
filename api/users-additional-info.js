@@ -1,7 +1,7 @@
-import { IgApiClient } from "instagram-private-api";
-import { authenticate } from "./utils/ipa";
+const { IgApiClient } = require("instagram-private-api");
 
-export default async function (req, res) {
+
+module.exports = async function (req, res) {
   console.log("GET ADDITIONAL INFO");
   console.time("Aditional Info");
   const { auth, users } = req.body;
@@ -30,25 +30,4 @@ export default async function (req, res) {
 
   console.timeEnd("Aditional Info");
   res.send(indexed_addt_info);
-  // res.send([]);
 }
-
-// const rejecteds = additional_info.filter(({ status }) => status === "rejected");
-
-// const rejecteds = additional_info
-//   .map((res, i) => {
-//     res.index = i;
-//     return res;
-//   })
-//   .filter(({ status }) => status === "rejected");
-// rejecteds.forEach(({ index }) => console.log(users[index].username));
-// const news = Promise.all(rejecteds.map(({ index }) => ig_client.user.info(users[index].pk)));
-
-// additional_info.map((res, index) => {
-//   if(res.status === 'rejected'){
-//     let neww;
-//     rejecteds.forEach((rejected, i) => {
-//       if(rejected.index === index) neww = news[i]
-//     })
-//   }
-// })

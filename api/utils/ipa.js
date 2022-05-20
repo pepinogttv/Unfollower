@@ -1,4 +1,4 @@
-import fs from "fs";
+const fs = require('fs')
 
 function auth_exists() {
   return fs.existsSync("auth.json");
@@ -60,4 +60,4 @@ async function get_following(ig_client, pk) {
   });
 }
 
-export { get_following, get_followers, authenticate };
+module.exports = { get_following, get_followers, authenticate };

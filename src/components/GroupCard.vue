@@ -1,8 +1,13 @@
 <template>
-  <!-- <v-tooltip bottom :disabled="!disabled"> -->
-  <!-- <template #activator="{ attrs, on }" > -->
-  <!-- <div v-on="on" v-bind="attrs"> -->
-  <div>
+  <div class="relative">
+    <div class="moreInfo">
+      <v-tooltip bottom v-if="data.help">
+        <template v-slot:activator="{ on, attrs }">
+          <v-icon v-bind="attrs" v-on="on"> mdi-help-circle </v-icon>
+        </template>
+        <span>{{ data.help }}</span>
+      </v-tooltip>
+    </div>
     <v-card
       :to="`/groups/${data.name}`"
       link
@@ -14,19 +19,6 @@
       class="pb-3 px-3"
       :disabled="disabled || loading"
     >
-      <div class="moreInfo">
-        <v-tooltip bottom v-if="data.help">
-          <template v-slot:activator="{ on, attrs }">
-            <v-icon color="#ccc" v-bind="attrs" v-on="on">
-              mdi-help-circle
-            </v-icon>
-          </template>
-          <span>{{ data.help }}</span>
-        </v-tooltip>
-      </div>
-      <!-- <div class="pt-3">
-        <span class="subtitle-2">Desde</span>
-      </div> -->
       <div
         class="font-weight-light pt-3"
         style="font-size: 28px; line-height: 35px"
@@ -38,9 +30,6 @@
       </div>
     </v-card>
   </div>
-  <!-- </template> -->
-  <!-- <span> Primero descarga tus datos </span> -->
-  <!-- </v-tooltip> -->
 </template>
 
 <script>
@@ -57,8 +46,12 @@ export default {
   position: absolute;
   right: 5px;
   top: 5px;
+  z-index: 1;
 }
 .click {
   cursor: pointer;
+}
+.relative {
+  position: relative;
 }
 </style>

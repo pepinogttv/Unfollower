@@ -1,6 +1,6 @@
-import { IgApiClient } from "instagram-private-api";
+const { IgApiClient } = require("instagram-private-api");
 
-export default async function (req, res) {
+module.exports = async function (req, res) {
   console.time("GET ONE USER INFO");
   const { auth, pk } = req.body;
 

@@ -1,7 +1,9 @@
 import http from "../http/http";
 import { divideArray } from "./utils";
-const base_url = new URL(window.location.href).origin + "/api";
-
+const { hostname, protocol, port } = new URL(window.location.href);
+const API_WITH_EXPRESS = port === '8080';
+const base_url = `${protocol}//${hostname}:3000/api`
+console.log(base_url)
 function getFollowers(account) {
   const body = JSON.stringify({
     auth: account.auth,
@@ -38,7 +40,7 @@ async function getAdditionalInfo(auth, users) {
 }
 
 function friendship(auth, action, users) {
-  const url = `${base_url}/friendship?action=${action}`;
+  const url = API_WITH_EXPRESS ? `${base_url}/friendship/${action}` : `${base_url}/friendship?action=${action}`;
   const body = JSON.stringify({ users, auth });
   return http.post(url, body);
 }

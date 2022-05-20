@@ -59,7 +59,6 @@ class RelatedUsersDB {
     this.db.getFromIndex(store_key, indexed_key, value);
   }
   async deleteOne(store_key, pk) {
-    console.log({ store_key, pk });
     await this.db.delete(store_key, pk);
   }
   async delete() {
@@ -93,7 +92,6 @@ export default async function (
     },
     async getUsers() {
       const users = {};
-      console.log(stores)
       for (const group of stores) {
         users[group] = await DB.getAll(group);
       }
@@ -112,7 +110,6 @@ export default async function (
       return DB.getOne(store, user_pk);
     },
     async getUserStoreNames(user) {
-      console.log({ user });
       const storeNames = [];
       for (const store of stores) {
         const exists = await DB.getOne(store, user.pk);

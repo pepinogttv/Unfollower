@@ -14,6 +14,9 @@ const users_info = storage.getUsersInfo();
 const state = {
   account: users_info && users_info.length === 1 ? users_info[0] : null,
   accounts: users_info ?? [],
+  actionInQty: '',
+  actionInQtyCurrentLoadingStart: null,
+  actionInQtyCurrentLoadingEnd: null
 };
 const mutations = make.mutations(state);
 const actions = {

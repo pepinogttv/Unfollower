@@ -1,12 +1,11 @@
-import { IgApiClient } from "instagram-private-api";
-import { authenticate } from "./utils/ipa";
+const { IgApiClient } = require("instagram-private-api");
 const waitFor = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-export default async function (req, res) {
+module.exports = async function (req, res) {
   console.time("Unfollow");
   const { auth, users } = req.body;
-  const { action } = req.query;
-
+  const action = req.query.action ?? req.params.action;
+  if (!action) return
   const ig_client = new IgApiClient();
   await ig_client.state.deserialize(auth);
 

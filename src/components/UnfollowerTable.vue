@@ -51,10 +51,8 @@
               </v-col>
               <v-col cols="2">
                 <InQuantity
-                  v-model="inQtyAction"
                   :selecteds="selecteds"
                   @action-confirmed="loading = true"
-                  @action-executed="actionExecuted"
                   @action-ended="loading = false"
                   @cancel="selecteds = []"
                 />
@@ -111,10 +109,10 @@
             <UserActions
               v-if="!pagination"
               @change:user="usersChanged = true"
+              @delete-user="delete_user"
               :user="item"
               :type="group"
-              @delete-user="delete_user"
-              :in-qty-action="inQtyAction"
+              :one-user-loading="oneUserLoading"
             />
             <div style="width: 220px; height: 1px" v-else></div>
           </template>
@@ -177,6 +175,7 @@ export default {
       usersChanged: false,
       page: 1,
       pageCount: 0,
+      oneUserLoading: null,
     };
   },
   mounted() {
@@ -209,13 +208,6 @@ export default {
     update_page() {
       this.pagination = true;
       setTimeout(() => (this.pagination = false));
-    },
-    actionExecuted(pk) {
-      console.log(pk);
-      this.relatedUsers[this.group] = this.current_related_users.filter(
-        (user) => user.pk !== pk
-      );
-      this.showedData = this.current_related_users;
     },
   },
   watch: {

@@ -1,7 +1,7 @@
-import { IgApiClient } from "instagram-private-api";
-import { get_followers } from "./utils/ipa";
+const { IgApiClient } = require("instagram-private-api")
+const { get_followers } = require("./utils/ipa.js");
 
-export default async function (req, res) {
+module.exports = async function (req, res) {
   console.time("Get Followers");
   const { auth, pk, username } = req.body;
 

@@ -11,7 +11,7 @@
     <v-dialog v-model="credDialog" max-width="600">
       <Credentials
         @saved-user-selected="setRelatedUsers"
-        @logged-in="credDialog = false"
+        @logged-in="loggedIn"
       />
     </v-dialog>
     <div class="d-flex justify-space-between align-center mb-6">
@@ -134,6 +134,10 @@ export default {
       this.$router.push({ path: "/groups" });
       if (usersChanged) this.setRelatedUsers();
     },
+    loggedIn() {
+      this.credDialog = false;
+      this.updateRelatedUsers();
+    },
   },
   computed: {
     group() {
@@ -153,9 +157,6 @@ export default {
     account(value) {
       if (!value) this.relatedUsers = null;
       else this.setRelatedUsers();
-    },
-    relatedUsers() {
-      console.log(this.relatedUsers);
     },
   },
 };
