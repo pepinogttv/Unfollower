@@ -1,3 +1,4 @@
 module.exports = function (req, res) {
-    res.send('Hola')
+    const { username, password } = req.body;
+    res.send({ username, password })
 }
