@@ -27,14 +27,10 @@ function saveLastUpdate(pk) {
   const STORAGE_NAME = "last-updates";
   const user_info = { pk, last_update: get_str_date_now() };
   const last_updates = get(STORAGE_NAME);
-
   if (!last_updates) return set(STORAGE_NAME, [user_info]);
-
   const stored = last_updates.find((user) => user.pk === pk);
   if (!stored) return set(STORAGE_NAME, [...last_updates, user_info]);
-
   stored.last_update = get_str_date_now();
-
   set(STORAGE_NAME, last_updates);
 }
 
