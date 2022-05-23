@@ -12,7 +12,9 @@ module.exports = async function (req, res) {
     const { outgoing_request } = await ig.friendship.show(pk);
     user.outgoing_request = outgoing_request ? 1 : 0;
   } else {
-    const { outgoing_request } = await ig.friendship.show(users[0].pk);
+    const data = await ig.friendship.show(users[0].pk);
+    console.log(data)
+    const { outgoing_request } = data;
     users[0].outgoing_request = outgoing_request ? 1 : 0;
   }
 

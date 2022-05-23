@@ -192,12 +192,20 @@ export default {
     handleActionInQty() {
       const row = this.$el.parentElement.parentElement;
       const checkbox = row.querySelector(".v-data-table__checkbox");
-      if (!checkbox) return;
+      if (!checkbox) {
+        console.log("El checkbox no existe");
+        return;
+      }
+
       if (!this.actionInQty) {
+        console.log("this.actionInQty no existe");
         checkbox.style.visibility = "hidden";
         return;
       }
+
       const action = this.actions.find(({ name }) => name === this.actionInQty);
+      console.log({ action: this.show_action(action.show_if) });
+
       if (this.show_action(action.show_if)) {
         checkbox.removeAttribute("style");
       } else {
@@ -226,6 +234,7 @@ export default {
       else this.deleted = true;
 
       this.loadings.is = false;
+      this.handleActionInQty();
     },
   },
   computed: {
@@ -237,17 +246,12 @@ export default {
   async created() {
     this.init();
   },
-  mounted() {
-    this.handleActionInQty();
-    console.log(this.actionInQty);
-  },
   watch: {
     actionInQty() {
       this.handleActionInQty();
     },
     actionInQtyCurrentLoadingStart(pk) {
       if (this.user.pk === pk) this.loadings.actionInQty = true;
-      console.log(this.loadings.actionInQty);
     },
     actionInQtyCurrentLoadingEnd(pk) {
       if (this.user.pk === pk) this.loadings.actionInQty = false;
