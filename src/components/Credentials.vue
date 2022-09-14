@@ -35,18 +35,17 @@
         ></v-text-field>
       </div>
     </div>
-    <v-checkbox
-      label="Mantener sesion (No se guarda tu clave)"
-      class="mt-8"
-    ></v-checkbox>
-    <v-btn
-      color="secondary"
-      type="submit"
-      :disabled="!username || !password"
-      :loading="loading"
-    >
-      Iniciar sesion
-    </v-btn>
+    <div class="d-flex justify-end">
+      <v-btn
+        class="mt-12"
+        color="secondary"
+        type="submit"
+        :disabled="!username || !password"
+        :loading="loading"
+      >
+        Iniciar sesion
+      </v-btn>
+    </div>
   </v-form>
 </template>
 

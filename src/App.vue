@@ -1,5 +1,13 @@
 <template>
   <v-app dark>
+    <v-system-bar height="30" app dark v-if="systembar && !isHome">
+      Por limitaciones de instagram el conteo de seguidores/seguidos puede no
+      ser exacto.
+      <v-spacer></v-spacer>
+      <v-btn icon @click="systembar = false">
+        <v-icon> mdi-close </v-icon>
+      </v-btn>
+    </v-system-bar>
     <div class="background-svg" v-if="isHome">
       <v-img src="./assets/fondo.svg" height="100%" width="100%"></v-img>
     </div>
@@ -30,6 +38,11 @@
 <script>
 import Logo from "./components/Logo.vue";
 export default {
+  data() {
+    return {
+      systembar: true,
+    };
+  },
   components: {
     Logo,
   },
@@ -46,7 +59,7 @@ export default {
 </script>
 <style lang="scss">
 #app {
-  background: #f5f5f5;
+  background: #e0e0e0;
 }
 .background-svg {
   position: fixed;

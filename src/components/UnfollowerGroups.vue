@@ -1,11 +1,7 @@
 <template>
   <div class="pa-8">
     <v-row>
-      <v-col
-        cols="6"
-        v-for="({ name, info, groupName, actions }, i) of groups"
-        :key="i"
-      >
+      <v-col cols="6" v-for="({ name, info, groupName }, i) of groups" :key="i">
         <v-card
           :to="`/groups/${groupName}`"
           link

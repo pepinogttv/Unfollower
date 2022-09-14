@@ -118,6 +118,7 @@ export default {
     async setRelatedUsers() {
       this.loading = true;
       this.relatedUsers = await getRelatedUsers(this.account.pk);
+      console.log(this.relatedUsers);
       this.loading = false;
     },
     ru_accesor(prop) {

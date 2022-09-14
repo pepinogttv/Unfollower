@@ -15,7 +15,6 @@
       width="100%"
       elevation="0"
       hover
-      :loading="loading"
       class="pb-3 px-3"
       :disabled="disabled || loading"
     >

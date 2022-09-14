@@ -1,7 +1,15 @@
 import { openDB, deleteDB } from "idb";
 const DefaultData = {
   version: 1,
-  objectStores: ["followers", "following", "fans", "idols", "friends", "gainedFollowers", "lostFollowers"],
+  objectStores: [
+    "followers",
+    "following",
+    "fans",
+    "idols",
+    "friends",
+    "gainedFollowers",
+    "lostFollowers",
+  ],
 };
 class RelatedUsersDB {
   constructor({ version, objectStores, pk }) {
@@ -23,9 +31,6 @@ class RelatedUsersDB {
           stores[storeKey] = db.createObjectStore(storeKey, {
             keyPath: "pk",
           });
-          // stores[storeKey].createIndex("pending_request", "pending_request", {
-          //   unique: false,
-          // });
         });
       },
     });

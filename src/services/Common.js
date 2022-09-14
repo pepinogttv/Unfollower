@@ -1,5 +1,5 @@
 import Api from "./Api.js";
-import { indexArray } from "./utils.js";
+import { indexArray, filterRepeated } from "./utils.js";
 import storage from "./storage";
 import UsersDB from "./RelatedUsersDB";
 
@@ -24,23 +24,29 @@ function getComputedUsers({ followers, following }) {
   return { fans, idols, friends };
 }
 
-async function getUpdatedUsers(account) {
-  return await Api.getFollowersAndFollowing(account);
-}
-
 function compareRelatedUsers(oldUsers, newUsers) {
+  console.log(oldUsers);
   const oldFollowers = oldUsers.followers;
   const newFollowers = newUsers.followers;
-  console.log({ oldFollowers, newFollowers });
+  const oldGainedFollowers = oldUsers.gainedFollowers;
+  const oldLostFollower = oldUsers.lostFollowers;
+
   const indexedOldFollowers = indexArray(oldFollowers, "pk");
   const indexedNewFollowers = indexArray(newFollowers, "pk");
 
-  const gainedFollowers = newFollowers.filter(
-    (follower) => !indexedOldFollowers[follower.pk]
-  );
-  const lostFollowers = oldFollowers.filter(
+  const oldLostFollowersToHold = oldLostFollower.filter(
     (follower) => !indexedNewFollowers[follower.pk]
   );
+  const oldGainedFollowersToHold = oldGainedFollowers.filter(
+    (follower) => indexedNewFollowers[follower.pk]
+  );
+
+  const gainedFollowers = newFollowers
+    .filter((follower) => !indexedOldFollowers[follower.pk])
+    .concat(oldGainedFollowersToHold);
+  const lostFollowers = oldFollowers
+    .filter((follower) => !indexedNewFollowers[follower.pk])
+    .concat(oldLostFollowersToHold);
 
   if (gainedFollowers.length && lostFollowers.length) {
     return {
@@ -63,37 +69,49 @@ function compareRelatedUsers(oldUsers, newUsers) {
   }
 }
 
+function filterRepeatedUsers(users) {
+  const withoutRepeateds = {};
+
+  Object.entries(users).forEach(([key, value]) => {
+    withoutRepeateds[key] = filterRepeated(value, "pk");
+  });
+
+  return withoutRepeateds;
+}
+
 async function updateRelatedUsers(account) {
   const { pk } = account;
   const DB = await UsersDB(pk);
 
   const [dataBaseUsers, updatedUsers] = await Promise.all([
     DB.getUsers(),
-    getUpdatedUsers(account),
+    Api.getFollowersAndFollowing(account),
   ]);
 
-  const isFirstDB = !Object.values(dataBaseUsers).find(v => v.length)
+  const isFirstDB = !Object.values(dataBaseUsers).find((v) => v.length);
 
   if (isFirstDB) {
-    const updatedUsers = await getUpdatedUsers(account);
-    const users = DB.setUsers({
+    const updatedUsers = await Api.getFollowersAndFollowing(account);
+    const allUsers = {
       ...updatedUsers,
       ...getComputedUsers(updatedUsers),
-    });
+    };
+
+    const filteredUsers = filterRepeatedUsers(allUsers);
+    const users = DB.setUsers(filteredUsers);
     DB.close();
-    return users
+    return users;
   }
 
   DB.close();
   await DB.delete();
 
   let relatedUsers = compareRelatedUsers(dataBaseUsers, updatedUsers);
-  relatedUsers = {
+  relatedUsers = filterRepeatedUsers({
     ...relatedUsers,
     ...getComputedUsers(relatedUsers),
-  };
+  });
 
-  // const storeNames = Object.keys(relatedUsers);
   const newDB = await UsersDB(pk);
 
   storage.saveLastUpdate(pk);
